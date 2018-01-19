@@ -1,13 +1,92 @@
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import java.util.EventListener;
+
+
+public class Main extends Application /*implements EventHandler<ActionEvent>*/ {
+
+    Button button;
+    Stage window;
+    Scene scene1, scene2;
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        /*
+        primaryStage.setTitle("Sample ");
 
+        button = new Button("Click me");
+        //button.setOnAction(this);
+        button.setOnAction(e -> {
+            System.out.println("You cliked me");
+            System.out.println("You cliked me");
+        });
+
+        StackPane stackapne = new StackPane();
+        stackapne.getChildren().add(button);
+
+        Scene scene = new Scene(stackapne, 300, 300);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    */
+/*
+        window = primaryStage;
+        Label label=new Label("First scene");
+        button=new Button("Go to scene 2");
+        button.setOnAction(e -> window.setScene(scene2));
+
+        VBox layout1 = new VBox(20);
+        layout1.getChildren().addAll(label, button);
+        scene1=new Scene(layout1, 200,300);
+
+        Label label2= new Label("Second scene");
+        Button button2=new Button("Go to 1 scene");
+        button2.setOnAction(e -> window.setScene(scene1));
+
+        VBox layout2 = new VBox(20);
+        layout2.getChildren().addAll(label2, button2);
+        scene2=new Scene(layout2, 200,300);
+
+        window.setScene(scene1);
+        window.setTitle("f");
+        window.show();
+        */
+
+        window = primaryStage;
+        window.setTitle("kdbjs");
+        button = new Button("Clicke ");
+        //button.setOnAction(e -> AlertBox.display("deed","lopital"));
+
+        //Communicate between windows
+        button.setOnAction(e -> {
+            boolean result = ConfirmBox.display("df", "df");
+            System.out.println(result);
+        });
+
+        StackPane layout = new StackPane();
+        layout.getChildren().add(button);
+        Scene scene = new Scene(layout, 200, 300);
+        window.setScene(scene);
+        window.show();
     }
+
+    /*
+    @Override
+    public void handle(ActionEvent event) {
+        if(event.getSource()==button){
+            System.out.println("You clicked me");
+        }
+    }
+    */
 }
