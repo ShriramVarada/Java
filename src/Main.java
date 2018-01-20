@@ -66,13 +66,20 @@ public class Main extends Application /*implements EventHandler<ActionEvent>*/ {
         window = primaryStage;
         window.setTitle("kdbjs");
         button = new Button("Clicke ");
+        window.setOnCloseRequest(e -> {
+            e.consume();
+            closeProgram();
+        });
         //button.setOnAction(e -> AlertBox.display("deed","lopital"));
 
+        /*
         //Communicate between windows
         button.setOnAction(e -> {
             boolean result = ConfirmBox.display("df", "df");
             System.out.println(result);
         });
+        */
+        button.setOnAction(e -> closeProgram());
 
         StackPane layout = new StackPane();
         layout.getChildren().add(button);
@@ -89,4 +96,8 @@ public class Main extends Application /*implements EventHandler<ActionEvent>*/ {
         }
     }
     */
+
+    private void closeProgram() {
+        window.close();
+    }
 }
