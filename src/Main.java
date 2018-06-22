@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import java.sql.*;
 
 import java.util.EventListener;
 
@@ -33,7 +34,7 @@ public class Main extends Application /*implements EventHandler<ActionEvent>*/ {
         hbox.getChildren().addAll(buttonA, buttonB);
 
         BorderPane borderPane = new BorderPane();
-        borderPane.setTop(hbox);
+        borderPane.setBottom(hbox);
         StackPane layout = new StackPane(borderPane);
         Scene scene = new Scene(layout, 300, 300);
 
