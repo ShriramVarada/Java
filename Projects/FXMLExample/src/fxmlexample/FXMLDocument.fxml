@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="200" prefWidth="320" stylesheets="@Login.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxmlexample.FXMLDocumentController">
+    <children>
+        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
+      <GridPane layoutX="45.0" layoutY="55.0" prefHeight="96.0" prefWidth="202.0" styleClass="root" stylesheets="@Login.css">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="188.0" minWidth="10.0" prefWidth="99.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="101.0" minWidth="10.0" prefWidth="101.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="26.0" minHeight="0.0" prefHeight="26.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="26.0" minHeight="40.0" prefHeight="50.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <GridPane>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label text="User name" />
+               </children>
+            </GridPane>
+            <TextField prefHeight="40.0" prefWidth="128.0" GridPane.columnIndex="1" />
+            <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label prefHeight="41.0" prefWidth="100.0" text="Password" GridPane.rowIndex="1" />
+            <HBox alignment="BOTTOM_RIGHT" prefHeight="425.0" prefWidth="612.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <children>
+                  <Button alignment="CENTER" onAction="#handleSubmitAction" prefHeight="31.0" prefWidth="80.0" text="Sign In" />
+                  <HBox alignment="BOTTOM_RIGHT" />
+               </children>
+            </HBox>
+         </children>
+      </GridPane>
+      <Text id="welcome-text" layoutX="79.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome" textAlignment="CENTER" wrappingWidth="187.0" />
+      <Text fx:id="actiontarget" layoutX="135.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="37.6708984375" />
+    </children>
+</AnchorPane>
