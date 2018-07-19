@@ -33,6 +33,13 @@ public class Main extends Application /*implements EventHandler<ActionEvent>*/ {
         Button buttonB = new Button("fh");
         hbox.getChildren().addAll(buttonA, buttonB);
 
+        buttonA.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                ConfirmBox.display("Sas", "sd");
+            }
+        });
+
         BorderPane borderPane = new BorderPane();
         borderPane.setBottom(hbox);
         StackPane layout = new StackPane(borderPane);

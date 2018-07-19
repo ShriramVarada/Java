@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+/Projects/FXMLExample/nbproject/private/
+/Projects/FXMLExample/build/
+/Projects/FXMLExample/dist/
+/Projects/Colorfulcircles/nbproject/private/
+/Projects/Colorfulcircles/build/
+/Projects/Colorfulcircles/dist/
