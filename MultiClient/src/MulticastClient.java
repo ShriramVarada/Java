@@ -28,11 +28,11 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+import java.util.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.*;
-import org.*;
+import org.ietf.*;
 import com.mysql.jdbc.Driver;
 
 public class MulticastClient {
