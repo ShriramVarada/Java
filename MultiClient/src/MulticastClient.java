@@ -32,11 +32,26 @@
 import java.io.*;
 import java.net.*;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.*;
+
 public class MulticastClient {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
 
-        MulticastSocket socket = new MulticastSocket(4446);
+        String driverName = "com.mysql.jdbc.Driver";
+        Class.forName(driverName); // here is the ClassNotFoundException
+
+        String serverName = "localhost";
+        String mydatabase = "sample";
+        String url = "jdbc:mysql://" + serverName + "/" + mydatabase + "?autoReconnect=true&useSSL=false";
+
+        String username = "root";
+        String password = "Narayana!2";
+        Connection connection = DriverManager.getConnection(url, username, password);
+
+        /*MulticastSocket socket = new MulticastSocket(4446);
         InetAddress address = InetAddress.getByName("230.0.113.0");
         socket.joinGroup(address);
 
@@ -54,7 +69,7 @@ public class MulticastClient {
         }
 
         socket.leaveGroup(address);
-        socket.close();
+        socket.close();*/
     }
 
 }
