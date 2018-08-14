@@ -29,20 +29,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.io.*;
-import java.net.*;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.*;
+import org.*;
+import com.mysql.jdbc.Driver;
 
 public class MulticastClient {
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
 
         String driverName = "com.mysql.jdbc.Driver";
-        Class.forName(driverName); // here is the ClassNotFoundException
-
+        Class sd = Class.forName(driverName); // here is the ClassNotFoundException
+        System.out.println(sd.toString());
         String serverName = "localhost";
         String mydatabase = "sample";
         String url = "jdbc:mysql://" + serverName + "/" + mydatabase + "?autoReconnect=true&useSSL=false";
