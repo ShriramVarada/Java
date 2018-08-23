@@ -32,8 +32,7 @@ import java.util.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.*;
-import org.ietf.*;
-import com.mysql.jdbc.Driver;
+import com.mysql.jdbc.*;
 
 public class MulticastClient {
 
@@ -49,6 +48,20 @@ public class MulticastClient {
         String username = "root";
         String password = "Narayana!2";
         Connection connection = DriverManager.getConnection(url, username, password);
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM sample.classes");
+        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+        int numberofColumns = resultSetMetaData.getColumnCount();
+
+        for (int i=1; i <= numberofColumns; i++){
+            System.out.printf("%-8s\t", resultSetMetaData.getColumnName(i));
+        }
+        System.out.println();
+        while(resultSet.next()){
+            String name = resultSet.getNString("name");
+            int id = resultSet.getInt("class_id");
+            System.out.printf("%-8s\t%d\n", name, id);
+        }
 
         /*MulticastSocket socket = new MulticastSocket(4446);
         InetAddress address = InetAddress.getByName("230.0.113.0");
@@ -69,6 +82,9 @@ public class MulticastClient {
 
         socket.leaveGroup(address);
         socket.close();*/
+        statement.close();
+        resultSet.close();
+        connection.close();
     }
 
 }

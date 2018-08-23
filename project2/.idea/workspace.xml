@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5ed18d7c-6670-47c4-9b78-d03e68d09e84" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/rt.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiClient/src/MulticastClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiClient/src/MulticastClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/project2/EchoClient.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/project2.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/EchoClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/EchoClient.java" afterDir="false" />
-    </list>
+    <list default="true" id="5ed18d7c-6670-47c4-9b78-d03e68d09e84" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,7 +15,7 @@
       <file leaf-file-name="EchoClient.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/EchoClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="32">
+            <state relative-caret-position="-80">
               <caret line="2" selection-start-line="2" selection-end-line="2" />
             </state>
           </provider>
@@ -80,7 +72,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -101,14 +95,12 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="C:/Program Files/Java/jdk1.8.0_112/jre/lib/rt.jar!/" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../MultiClient" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="C:/Program Files/nodejs/node" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Libraries" />
@@ -205,15 +197,23 @@
       <workItem from="1532020633994" duration="2930000" />
       <workItem from="1534273157991" duration="171000" />
       <workItem from="1534273379733" duration="219000" />
+      <workItem from="1534273716074" duration="194000" />
     </task>
+    <task id="LOCAL-00001" summary="Tried org package">
+      <created>1534273785095</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1534273785095</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3320000" />
+    <option name="totallyTimeSpent" value="3514000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="5" />
       <window_info anchor="bottom" id="TODO" order="11" />
@@ -251,7 +251,27 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Tried org package" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tried org package" />
+  </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/EchoClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/EchoServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/EchoClient.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="304">
@@ -295,7 +315,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/EchoClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32">
+        <state relative-caret-position="-80">
           <caret line="2" selection-start-line="2" selection-end-line="2" />
         </state>
       </provider>
