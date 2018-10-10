@@ -54,13 +54,13 @@ public class MulticastClient {
         int numberofColumns = resultSetMetaData.getColumnCount();
 
         for (int i=1; i <= numberofColumns; i++){
-            System.out.printf("%-8s\t", resultSetMetaData.getColumnName(i));
+            System.out.printf("%-16s\t", resultSetMetaData.getColumnName(i));
         }
         System.out.println();
         while(resultSet.next()){
             String name = resultSet.getNString("name");
             int id = resultSet.getInt("class_id");
-            System.out.printf("%-8s\t%d\n", name, id);
+            System.out.printf("%-16s\t%d\n", name, id);
         }
 
         /*MulticastSocket socket = new MulticastSocket(4446);
