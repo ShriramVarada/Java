@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 public class Panel extends JPanel {
-    private int[] arr = new int[5000];
+    private int[] arr = new int[1750];
     Panel(){
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         for (int i=0; i< arr.length; ++i){
@@ -101,8 +101,11 @@ public class Panel extends JPanel {
                 j++;
             }
             k++;
-            repaint();
             sleep(1);
+            repaint(100000, 100, 100, 500, 500);
+            sleep(1);
+            repaint(100000, 100, 100, 500, 500);
+
         }
 
         /* Copy remaining elements of L[] if any */
@@ -111,8 +114,10 @@ public class Panel extends JPanel {
             arr[k] = L[i];
             i++;
             k++;
-            repaint();
             sleep(1);
+            //repaint(100000);
+            repaint(100000, 100, 100, 500, 500);
+
         }
 
         /* Copy remaining elements of R[] if any */
@@ -121,8 +126,9 @@ public class Panel extends JPanel {
             arr[k] = R[j];
             j++;
             k++;
-            repaint();
             sleep(1);
+            //repaint(100000);
+            repaint(100000, 100, 100, 500, 500);
         }
     }
 
