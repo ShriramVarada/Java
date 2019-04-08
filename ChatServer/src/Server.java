@@ -12,8 +12,6 @@ public class Server{
 
     private List<Channel> channelList;
 
-    private HashMap<Long, Channel> usersandChannels;
-
     private ServerSocket serverSocket;
 
     public Server(int port){
@@ -25,7 +23,6 @@ public class Server{
 
         }
         channelList = new ArrayList<>();
-        usersandChannels = new HashMap<>();
     }
 
     public void createClientThread(Socket socket, Server server){
@@ -43,13 +40,11 @@ public class Server{
 
         @Override
         public void run() {
-            InputStream inp;
             BufferedReader inputfromClient;
-            DataOutputStream outputtoClient;
+            ObjectOutputStream outputtoClient;
             try {
-                inp = socket.getInputStream();
-                inputfromClient = new BufferedReader(new InputStreamReader(inp));
-                outputtoClient = new DataOutputStream(socket.getOutputStream());
+                inputfromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                outputtoClient = new ObjectOutputStream(socket.getOutputStream());
             } catch (IOException e) {
                 return;
             }

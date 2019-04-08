@@ -5,6 +5,8 @@ public class Channel {
 
     public List<String> clientsUsernames;
 
+    public List<String> activeUsernames;
+
     /**
      * This specifies the list of messages, each by a client
      */
@@ -13,6 +15,7 @@ public class Channel {
     public Channel(){
         clientsUsernames = new ArrayList<>();
         messages = new ArrayList<>();
+        activeUsernames = new ArrayList<>();
     }
 
 

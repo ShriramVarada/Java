@@ -1,5 +1,7 @@
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
@@ -8,6 +10,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import java.io.*;
+import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,6 +25,11 @@ public class Client extends Application implements Runnable{
 
     private static int clientNumber;
 
+    private TextArea textArea;
+
+    private PrintWriter out;
+    private InputStreamReader in;
+
     public String getClientusername() {
         return username;
     }
@@ -31,13 +40,29 @@ public class Client extends Application implements Runnable{
 
     private String username;
 
+    public Client(String hostname, int port){
+        try {
+            Socket socket = new Socket(hostname, port);
+            out = new PrintWriter(socket.getOutputStream());
+            in = new InputStreamReader(socket.getInputStream());
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void run() {
         launch(args);
+        // TODO create buttons in HBox according to commands
     }
 
+    public void createButtons(){
 
+    }
+
+    public void getChannelText(){
+
+    }
 
     /**
      * The main entry point for all JavaFX applications.
@@ -62,11 +87,23 @@ public class Client extends Application implements Runnable{
         channelButtons.setPadding(new Insets(12,12,12,12));
         borderpane.setTop(channelButtons);
 
-        TextArea textarea = new TextArea();
-        borderpane.setCenter(textarea);
+        textArea = new TextArea();
+        borderpane.setCenter(textArea);
 
         enterMessage = new TextField();
         borderpane.setBottom(enterMessage);
+
+        enterMessage.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String outmessage = enterMessage.getText();
+                try {
+                    out.println(outmessage);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
 
         primaryStage.setScene(new Scene(borderpane, 300,300));
         String clientnumbers = "Client "+ clientNumber;
@@ -76,11 +113,10 @@ public class Client extends Application implements Runnable{
 
     public static void main(String[] args){
         clientNumber = Integer.parseInt(args[0]);
-        Client client = new Client();
+        Client client = new Client("localhost", 3306);
         client.args = args;
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.execute(client);
         executorService.shutdown();
-
     }
 }
