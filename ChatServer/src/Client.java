@@ -4,10 +4,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -28,7 +30,7 @@ public class Client extends Application implements Runnable{
     private TextArea textArea;
 
     private PrintWriter out;
-    private InputStreamReader in;
+    private BufferedReader in;
 
     public String getClientusername() {
         return username;
@@ -44,7 +46,7 @@ public class Client extends Application implements Runnable{
         try {
             Socket socket = new Socket(hostname, port);
             out = new PrintWriter(socket.getOutputStream());
-            in = new InputStreamReader(socket.getInputStream());
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -53,32 +55,70 @@ public class Client extends Application implements Runnable{
     @Override
     public void run() {
         launch(args);
-        // TODO create buttons in HBox according to commands
+        String message;
+        while(true)
+        {
+            try{
+                message = in.readLine();
+                message = message.replace("\n", "").replace("\r", "");
+                if (message.startsWith("?*"))
+                {
+                    createButtons(message);
+                }
+                /* Different
+                 * channel message
+                 */
+                else if (message.startsWith("STARTCHANNELTRANS"))
+                {
+                    textArea.clear();
+                    message = "";
+                    while(!message.startsWith("ENDCHANNELTRANS"))
+                    {
+                        textArea.appendText(message);
+                        message = in.readLine();
+                    }
+                }
+                else if(message.startsWith("USERNAME:"))
+                {
+                    setClientusername(message.substring(9));
+                    textArea.setText("Success! Username was set");
+                }
+                else if(message.startsWith("USERNAMEAINUSE"))
+                {
+                    textArea.setText("That username is already in use. Try a different one");
+                }
+                else if(message.startsWith("***"))
+                {
+                    textArea.appendText(message.substring(3));
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
     }
 
-    public void createButtons(){
-
+    private void createButtons(String message){
+        VBox vbox = new VBox(2);
+        String channelNumber = message.substring(2,3).toUpperCase() + message.substring(3);
+        Button button = new Button(channelNumber);
+        button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                out.println(channelNumber);
+            }
+        });
+        Button exitButton = new Button("Exit");
+        exitButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                out.println("EXIT" + channelNumber);
+            }
+        });
+        vbox.getChildren().addAll(button, exitButton);
+        channelButtons.getChildren().addAll(vbox);
     }
 
-    public void getChannelText(){
 
-    }
-
-    /**
-     * The main entry point for all JavaFX applications.
-     * The start method is called after the init method has returned,
-     * and after the system is ready for the application to begin running.
-     * <p>
-     * <p>
-     * NOTE: This method is called on the JavaFX Application Thread.
-     * </p>
-     *
-     * @param primaryStage the primary stage for this application, onto which
-     *                     the application scene can be set. The primary stage will be embedded in
-     *                     the browser if the application was launched as an applet.
-     *                     Applications may create other stages, if needed, but they will not be
-     *                     primary stages and will not be embedded in the browser.
-     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         BorderPane borderpane = new BorderPane();
