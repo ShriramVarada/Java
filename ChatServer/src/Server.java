@@ -85,20 +85,32 @@ public class Server{
                     {
                         //TODO handle the channel chat here
                     }
+                    else if(message.startsWith("@@@"))
+                    {
+                        Thread.currentThread().interrupt();
+                        if(Thread.interrupted())
+                        {
+                            onlineUsers.remove(username);
+                            inputfromClient.close();
+                            outputtoClient.close();
+                            socket.close();
+                            return;
+                        }
+                    }
                 }catch(IOException e){
                     e.printStackTrace();
                 }
             }
-            onlineUsers.remove(username);
-
-            try {
-                inputfromClient.close();
-                outputtoClient.close();
-                socket.close();
-            }catch(IOException e)
-            {
-                e.printStackTrace();
-            }
+//            onlineUsers.remove(username);
+//
+//            try {
+//                inputfromClient.close();
+//                outputtoClient.close();
+//                socket.close();
+//            }catch(IOException e)
+//            {
+//                e.printStackTrace();
+//            }
         }
     }
 
