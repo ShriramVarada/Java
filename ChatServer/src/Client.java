@@ -29,6 +29,8 @@ public class Client extends Application implements Runnable{
 
     private TextArea textArea;
 
+    private Boolean stop = true;
+
     private PrintWriter out;
     private BufferedReader in;
 
@@ -40,11 +42,13 @@ public class Client extends Application implements Runnable{
         this.username = username;
     }
 
+    private Socket socket;
+
     private String username;
 
     public Client(String hostname, int port){
         try {
-            Socket socket = new Socket(hostname, port);
+            socket = new Socket(hostname, port);
             out = new PrintWriter(socket.getOutputStream());
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }catch(IOException e){
@@ -56,11 +60,10 @@ public class Client extends Application implements Runnable{
     public void run() {
         launch(args);
         String message;
-        while(true)
+        while(stop)
         {
             try{
                 message = in.readLine();
-                message = message.replace("\n", "").replace("\r", "");
                 if (message.startsWith("?*"))
                 {
                     createButtons(message);
@@ -83,7 +86,7 @@ public class Client extends Application implements Runnable{
                     setClientusername(message.substring(9));
                     textArea.setText("Success! Username was set");
                 }
-                else if(message.startsWith("USERNAMEAINUSE"))
+                else if(message.equals("USERNAMEAINUSE"))
                 {
                     textArea.setText("That username is already in use. Try a different one");
                 }
@@ -104,7 +107,7 @@ public class Client extends Application implements Runnable{
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                out.println(channelNumber);
+                out.println("ENTER"+channelNumber);
             }
         });
         Button exitButton = new Button("Exit");
@@ -149,6 +152,20 @@ public class Client extends Application implements Runnable{
         String clientnumbers = "Client "+ clientNumber;
         primaryStage.setTitle(clientnumbers);
         primaryStage.show();
+    }
+
+    @Override
+    public void stop(){
+        System.out.println("Stopping...");
+        out.println("@@@");
+        try {
+            stop = false;
+            out.close();
+            in.close();
+            socket.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args){
