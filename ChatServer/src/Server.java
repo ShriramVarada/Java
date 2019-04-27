@@ -55,9 +55,19 @@ public class Server{
         public void run() {
             outputtoClient.println("Connected");
             System.out.println("Connected");
+            outputtoClient.flush();
             String message;
             while(true){
                 try{
+
+                    if(Thread.interrupted())
+                    {
+                        outputtoClient.close();
+                        inputfromClient.close();
+                        socket.close();
+                        return;
+                    }
+
                     message = inputfromClient.readLine();
                     if(message.startsWith("@@@"))
                     {
@@ -75,16 +85,18 @@ public class Server{
                         outputtoClient.println(message);
                     }
                     outputtoClient.println("df\n");
-                    /*if(message.startsWith(":"))
+                    if(message.startsWith(":"))
                     {
                         username = message.substring(1);
                         if(onlineUsers.contains(username))
                         {
-                            outputtoClient.writeChars("USERNAMEAINUSE");
+                            outputtoClient.println("USERNAMEAINUSE");
+                            outputtoClient.flush();
                         }
                         else {
                             onlineUsers.add(username);
-                            outputtoClient.writeChars("USERNAME:" + message.substring(1));
+                            outputtoClient.println("USERNAME:" + message.substring(1));
+                            outputtoClient.flush();
                         }
                     }
                     else if (message.startsWith("JOIN"))
@@ -92,7 +104,8 @@ public class Server{
                         int channelnumber = message.charAt(11) - '0';
                         channelList.get(channelnumber).activeUsernames.add(username);
                         channelList.get(channelnumber).clientsUsernames.add(username);
-                        outputtoClient.writeChars("?*"+message.substring(4));
+                        outputtoClient.println("?*"+message.substring(4));
+                        outputtoClient.flush();
                     }
                     else if(message.startsWith("EXIT"))
                     {
@@ -102,15 +115,12 @@ public class Server{
                     else if(message.startsWith("ENTER"))
                     {
                         //TODO handle the channel chat here
+
                     }
                     else if(message.startsWith("@@@"))
                     {
                         Thread.currentThread().interrupt();
-                        if(Thread.interrupted())
-                        {
-
-                        }
-                    }*/
+                    }
                 }catch(IOException e){
                     e.printStackTrace();
                 }
@@ -130,7 +140,7 @@ public class Server{
 
     public static void main(String[] args){
         Server server = new Server(6000);
-        Socket socket=null;
+        Socket socket;
         //ExecutorService executorService = Executors.newFixedThreadPool(3);
         while(true) {
             try {

@@ -19,17 +19,15 @@ import java.util.concurrent.Executors;
 
 public class Client extends Application implements Runnable{
 
-    private HBox channelButtons;
+    private HBox channelButtons = new HBox(5);
 
-    private TextField enterMessage;
+    private TextField enterMessage = new TextField();
 
     private String[] args;
 
     private static int clientNumber;
 
-    private TextArea textArea  = new TextArea();
-
-    private Boolean stop = true;
+    private TextArea textArea = new TextArea();
 
     private PrintWriter out;
     private BufferedReader in;
@@ -47,7 +45,6 @@ public class Client extends Application implements Runnable{
     public void init(String[] args, String hostname, int port)
     {
         this.args = args;
-
         try {
             socket = new Socket(hostname, port);
             out = new PrintWriter(socket.getOutputStream());
@@ -60,27 +57,26 @@ public class Client extends Application implements Runnable{
 
     private String username;
 
-
     @Override
     public void run() {
         System.out.println("sdf");
-        String message="";
-        System.out.println(in);
-        int read=0;
-        try {
-            read = in.read();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-        System.out.println(read);
-        System.out.println("asd");
+        String message;
+        textArea.setText("sfd");
         while(true)
         {
             try{
-                read = in.read();
-                System.out.println(read);
-                textArea.appendText("sda");
-                out.println("dsf");
+                if(Thread.interrupted())
+                {
+                    out.println("@@@");
+                    out.close();
+                    in.close();
+                    socket.close();
+                    return;
+                }
+                message = in.readLine();
+                System.out.println(message);
+                textArea.setText("fsd");
+
                 /*if (message.startsWith("?*"))
                 {
                     createButtons(message);
@@ -142,15 +138,11 @@ public class Client extends Application implements Runnable{
     @Override
     public void start(Stage primaryStage) {
         BorderPane borderpane = new BorderPane();
-        channelButtons = new HBox(5);
         channelButtons.setStyle("-fx-background-color: #008080");
         channelButtons.setPadding(new Insets(12,12,12,12));
         borderpane.setTop(channelButtons);
 
-        textArea = new TextArea();
         borderpane.setCenter(textArea);
-
-        enterMessage = new TextField();
         borderpane.setBottom(enterMessage);
 
         enterMessage.setOnAction(new EventHandler<ActionEvent>() {
@@ -174,15 +166,7 @@ public class Client extends Application implements Runnable{
     @Override
     public void stop(){
         System.out.println("Stopping...");
-//        out.println("@@@");
-//        try {
-//            stop = false;
-//            out.close();
-//            in.close();
-//            socket.close();
-//        }catch (IOException e){
-//            e.printStackTrace();
-//        }
+        Thread.currentThread().interrupt();
     }
 
     public static void main(String[] args){
@@ -193,6 +177,6 @@ public class Client extends Application implements Runnable{
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.execute(client);
         executorService.shutdown();
-        launch(args);
+
     }
 }
