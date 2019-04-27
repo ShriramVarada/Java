@@ -38,26 +38,44 @@ public class Server{
 
     private class ClientThread implements Runnable{
         private Socket socket;
-        String username;
+        private BufferedReader inputfromClient;
+        private PrintWriter outputtoClient;
         ClientThread(Socket socket){
             this.socket = socket;
+            try {
+                outputtoClient = new PrintWriter(socket.getOutputStream());
+                inputfromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void run() {
-            BufferedReader inputfromClient;
-            ObjectOutputStream outputtoClient;
-            try {
-                inputfromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                outputtoClient = new ObjectOutputStream(socket.getOutputStream());
-            } catch (IOException e) {
-                return;
-            }
-            String message="";
-            while(!message.startsWith("@@@")){
+            outputtoClient.println("Connected");
+            System.out.println("Connected");
+            String message;
+            while(true){
                 try{
                     message = inputfromClient.readLine();
-                    if(message.startsWith(":"))
+                    if(message.startsWith("@@@"))
+                    {
+                        Thread.currentThread().interrupt();
+                        if(Thread.interrupted())
+                        {
+                            //onlineUsers.remove(username);
+                            inputfromClient.close();
+                            outputtoClient.close();
+                            socket.close();
+                            return;
+                        }
+                    }else
+                    {
+                        outputtoClient.println(message);
+                    }
+                    outputtoClient.println("df\n");
+                    /*if(message.startsWith(":"))
                     {
                         username = message.substring(1);
                         if(onlineUsers.contains(username))
@@ -90,13 +108,9 @@ public class Server{
                         Thread.currentThread().interrupt();
                         if(Thread.interrupted())
                         {
-                            onlineUsers.remove(username);
-                            inputfromClient.close();
-                            outputtoClient.close();
-                            socket.close();
-                            return;
+
                         }
-                    }
+                    }*/
                 }catch(IOException e){
                     e.printStackTrace();
                 }
@@ -115,16 +129,17 @@ public class Server{
     }
 
     public static void main(String[] args){
-        Server server = new Server(80);
-        Socket socket = null;
+        Server server = new Server(6000);
+        Socket socket=null;
         //ExecutorService executorService = Executors.newFixedThreadPool(3);
         while(true) {
             try {
                 socket = server.serverSocket.accept();
+                server.createClientThread(socket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            server.createClientThread(socket);
+
         }
     }
 }

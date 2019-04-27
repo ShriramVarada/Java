@@ -27,7 +27,7 @@ public class Client extends Application implements Runnable{
 
     private static int clientNumber;
 
-    private TextArea textArea;
+    private TextArea textArea  = new TextArea();
 
     private Boolean stop = true;
 
@@ -44,9 +44,10 @@ public class Client extends Application implements Runnable{
 
     private Socket socket;
 
-    private String username;
+    public void init(String[] args, String hostname, int port)
+    {
+        this.args = args;
 
-    public Client(String hostname, int port){
         try {
             socket = new Socket(hostname, port);
             out = new PrintWriter(socket.getOutputStream());
@@ -54,23 +55,39 @@ public class Client extends Application implements Runnable{
         }catch(IOException e){
             e.printStackTrace();
         }
+
     }
+
+    private String username;
+
 
     @Override
     public void run() {
-        launch(args);
-        String message;
-        while(stop)
+        System.out.println("sdf");
+        String message="";
+        System.out.println(in);
+        int read=0;
+        try {
+            read = in.read();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        System.out.println(read);
+        System.out.println("asd");
+        while(true)
         {
             try{
-                message = in.readLine();
-                if (message.startsWith("?*"))
+                read = in.read();
+                System.out.println(read);
+                textArea.appendText("sda");
+                out.println("dsf");
+                /*if (message.startsWith("?*"))
                 {
                     createButtons(message);
                 }
                 /* Different
                  * channel message
-                 */
+
                 else if (message.startsWith("STARTCHANNELTRANS"))
                 {
                     textArea.clear();
@@ -93,7 +110,7 @@ public class Client extends Application implements Runnable{
                 else if(message.startsWith("***"))
                 {
                     textArea.appendText(message.substring(3));
-                }
+                }*/
             }catch (IOException e){
                 e.printStackTrace();
             }
@@ -123,7 +140,7 @@ public class Client extends Application implements Runnable{
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         BorderPane borderpane = new BorderPane();
         channelButtons = new HBox(5);
         channelButtons.setStyle("-fx-background-color: #008080");
@@ -157,23 +174,25 @@ public class Client extends Application implements Runnable{
     @Override
     public void stop(){
         System.out.println("Stopping...");
-        out.println("@@@");
-        try {
-            stop = false;
-            out.close();
-            in.close();
-            socket.close();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+//        out.println("@@@");
+//        try {
+//            stop = false;
+//            out.close();
+//            in.close();
+//            socket.close();
+//        }catch (IOException e){
+//            e.printStackTrace();
+//        }
     }
 
     public static void main(String[] args){
-        clientNumber = Integer.parseInt(args[0]);
-        Client client = new Client("localhost", 3306);
-        client.args = args;
+        int clientNumber = 5;
+        Client client = new Client();
+        client.init(args, "localhost", 6000);
+
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.execute(client);
         executorService.shutdown();
+        launch(args);
     }
 }
