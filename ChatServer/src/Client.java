@@ -75,6 +75,8 @@ public class Client extends Application implements Runnable{
                 System.out.println(message);
                 textArea.setText("fsd");
 
+                // Handle if not in any channel
+
                 if (message.startsWith("?*"))
                 {
                     createButtons(message);

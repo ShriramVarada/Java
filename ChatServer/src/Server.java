@@ -1,4 +1,6 @@
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,13 +15,14 @@ public class Server{
 
     private final List<Channel> channelList = new CopyOnWriteArrayList<>();
 
-    private List<String> onlineUsers = new CopyOnWriteArrayList<>();
+    private List<String> onlineUsers;
 
     private ServerSocket serverSocket;
 
     private ExecutorService executorService;
 
     public Server(int port){
+        onlineUsers = new CopyOnWriteArrayList<>();
         executorService = Executors.newCachedThreadPool();
         try {
             serverSocket = new ServerSocket(port);
@@ -67,6 +70,7 @@ public class Server{
 
                     if(Thread.interrupted())
                     {
+                        onlineUsers.remove(username);
                         outputtoClient.close();
                         inputfromClient.close();
                         socket.close();
@@ -76,8 +80,23 @@ public class Server{
                     message = inputfromClient.readLine();
                     if(message.startsWith(":"))
                     {
+                        Boolean inUse = false;
                         username = message.substring(1);
-                        if(onlineUsers.contains(username))
+
+                        for (Channel channel : channelList)
+                        {
+                            for (String username2: channel.clientsUsernames)
+                            {
+                                if(username2.equals(username))
+                                {
+                                    inUse = true;
+                                }
+                            }
+                        }
+
+                        // TODO handle this in a mysql database from the server
+
+                        if(inUse)
                         {
                             sendMessage("USERNAMEAINUSE");
                         }
@@ -98,12 +117,13 @@ public class Server{
                     }
                     else if(message.startsWith("EXIT"))
                     {
-                        channelnumber = message.charAt(11) - '0';
+                        // See if channel number equals in the message and if so, then exit otherwise send mesage
+                        // that wrong channel
                         channelList.get(channelnumber).activeUsernames.remove(username);
                     }
                     else if(message.startsWith("ENTER"))
                     {
-                        //TODO handle the channel chat here
+                        //TODO if already in this channel, then do nothing
                         channelnumber = message.charAt(12) - '0';
                         sendMessage("STARTCHANNELTRANS");
 
@@ -122,6 +142,8 @@ public class Server{
                     }
                     else
                     {
+                        // if not in any channel, then send message that not in any channel
+
                         channelList.get(channelnumber).messages.add(message);
                         for (int i = messageNumber; i < channelList.get(channelnumber).messages.size(); i++)
                         {
