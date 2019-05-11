@@ -17,8 +17,10 @@ public class Server{
 
     private ServerSocket serverSocket;
 
-    public Server(int port){
+    private ExecutorService executorService;
 
+    public Server(int port){
+        executorService = Executors.newCachedThreadPool();
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
@@ -33,13 +35,15 @@ public class Server{
     }
 
     private void createClientThread(Socket socket){
-        new Thread(new ClientThread(socket)).start();
+        executorService.execute(new ClientThread(socket));
     }
 
     private class ClientThread implements Runnable{
         private Socket socket;
         private BufferedReader inputfromClient;
         private PrintWriter outputtoClient;
+        String username;
+        private int messageNumber;
         ClientThread(Socket socket){
             this.socket = socket;
             try {
@@ -57,6 +61,7 @@ public class Server{
             System.out.println("Connected");
             outputtoClient.flush();
             String message;
+            int channelnumber = 0;
             while(true){
                 try{
 
@@ -69,79 +74,78 @@ public class Server{
                     }
 
                     message = inputfromClient.readLine();
-                    if(message.startsWith("@@@"))
-                    {
-                        Thread.currentThread().interrupt();
-                        if(Thread.interrupted())
-                        {
-                            //onlineUsers.remove(username);
-                            inputfromClient.close();
-                            outputtoClient.close();
-                            socket.close();
-                            return;
-                        }
-                    }else
-                    {
-                        outputtoClient.println(message);
-                    }
-                    outputtoClient.println("df\n");
                     if(message.startsWith(":"))
                     {
                         username = message.substring(1);
                         if(onlineUsers.contains(username))
                         {
-                            outputtoClient.println("USERNAMEAINUSE");
-                            outputtoClient.flush();
+                            sendMessage("USERNAMEAINUSE");
                         }
                         else {
                             onlineUsers.add(username);
-                            outputtoClient.println("USERNAME:" + message.substring(1));
-                            outputtoClient.flush();
+                            sendMessage("USERNAME:" + message.substring(1));
                         }
                     }
                     else if (message.startsWith("JOIN"))
                     {
-                        int channelnumber = message.charAt(11) - '0';
+                        channelnumber = message.charAt(11) - '0';
                         channelList.get(channelnumber).activeUsernames.add(username);
                         channelList.get(channelnumber).clientsUsernames.add(username);
-                        outputtoClient.println("?*"+message.substring(4));
-                        outputtoClient.flush();
+
+                        // TODO handle if username not present. This is where Mysql comes in for handling usernames in channels
+
+                        sendMessage("?*"+message.substring(4));
                     }
                     else if(message.startsWith("EXIT"))
                     {
-                        int channelnumber = message.charAt(11) - '0';
+                        channelnumber = message.charAt(11) - '0';
                         channelList.get(channelnumber).activeUsernames.remove(username);
                     }
                     else if(message.startsWith("ENTER"))
                     {
                         //TODO handle the channel chat here
+                        channelnumber = message.charAt(12) - '0';
+                        sendMessage("STARTCHANNELTRANS");
+
+                        for(String message2 : channelList.get(channelnumber).messages)
+                        {
+                            sendMessage(message2);
+                        }
+
+                        sendMessage("ENDCHANNELTRANS");
+                        messageNumber = channelList.get(channelnumber).messages.size();
 
                     }
                     else if(message.startsWith("@@@"))
                     {
                         Thread.currentThread().interrupt();
                     }
+                    else
+                    {
+                        channelList.get(channelnumber).messages.add(message);
+                        for (int i = messageNumber; i < channelList.get(channelnumber).messages.size(); i++)
+                        {
+                            sendMessage(channelList.get(channelnumber).messages.get(i));
+                        }
+                        messageNumber = channelList.get(channelnumber).messages.size();
+                    }
                 }catch(IOException e){
                     e.printStackTrace();
                 }
             }
-//            onlineUsers.remove(username);
-//
-//            try {
-//                inputfromClient.close();
-//                outputtoClient.close();
-//                socket.close();
-//            }catch(IOException e)
-//            {
-//                e.printStackTrace();
-//            }
         }
+
+        public void sendMessage(String message)
+        {
+            outputtoClient.println(message);
+            outputtoClient.flush();
+        }
+
     }
 
     public static void main(String[] args){
         Server server = new Server(6000);
         Socket socket;
-        //ExecutorService executorService = Executors.newFixedThreadPool(3);
         while(true) {
             try {
                 socket = server.serverSocket.accept();

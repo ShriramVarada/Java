@@ -59,9 +59,7 @@ public class Client extends Application implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("sdf");
         String message;
-        textArea.setText("sfd");
         while(true)
         {
             try{
@@ -77,13 +75,13 @@ public class Client extends Application implements Runnable{
                 System.out.println(message);
                 textArea.setText("fsd");
 
-                /*if (message.startsWith("?*"))
+                if (message.startsWith("?*"))
                 {
                     createButtons(message);
                 }
                 /* Different
                  * channel message
-
+                */
                 else if (message.startsWith("STARTCHANNELTRANS"))
                 {
                     textArea.clear();
@@ -106,7 +104,7 @@ public class Client extends Application implements Runnable{
                 else if(message.startsWith("***"))
                 {
                     textArea.appendText(message.substring(3));
-                }*/
+                }
             }catch (IOException e){
                 e.printStackTrace();
             }
