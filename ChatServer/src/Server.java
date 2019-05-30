@@ -4,6 +4,7 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.*;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,6 +21,8 @@ public class Server{
     private ServerSocket serverSocket;
 
     private ExecutorService executorService;
+
+    private Connection connection;
 
     public Server(int port){
         onlineUsers = new CopyOnWriteArrayList<>();
@@ -98,7 +101,7 @@ public class Server{
 
                         if(inUse)
                         {
-                            sendMessage("USERNAMEAINUSE");
+                            sendMessage("USERNAMEINUSE");
                         }
                         else {
                             onlineUsers.add(username);
@@ -166,7 +169,16 @@ public class Server{
     }
 
     public static void main(String[] args){
+
         Server server = new Server(6000);
+
+        try {
+            server.connection = DriverManager.getConnection("jdbc:mysql://localhost/sample" +
+                    "user=root&password=Narayana!2");
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
         Socket socket;
         while(true) {
             try {

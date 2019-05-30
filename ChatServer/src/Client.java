@@ -3,11 +3,11 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -99,7 +99,7 @@ public class Client extends Application implements Runnable{
                     setClientusername(message.substring(9));
                     textArea.setText("Success! Username was set");
                 }
-                else if(message.equals("USERNAMEAINUSE"))
+                else if(message.equals("USERNAMEINUSE"))
                 {
                     textArea.setText("That username is already in use. Try a different one");
                 }
@@ -113,6 +113,11 @@ public class Client extends Application implements Runnable{
         }
     }
 
+    public void sendMessage(String message){
+        out.println(message);
+        out.flush();
+    }
+
     private void createButtons(String message){
         VBox vbox = new VBox(2);
         String channelNumber = message.substring(2,3).toUpperCase() + message.substring(3);
@@ -120,14 +125,14 @@ public class Client extends Application implements Runnable{
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                out.println("ENTER"+channelNumber);
+                sendMessage("ENTER"+channelNumber);
             }
         });
         Button exitButton = new Button("Exit");
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                out.println("EXIT" + channelNumber);
+                sendMessage("EXIT" + channelNumber);
             }
         });
         vbox.getChildren().addAll(button, exitButton);
@@ -150,16 +155,89 @@ public class Client extends Application implements Runnable{
             public void handle(ActionEvent event) {
                 String outmessage = enterMessage.getText();
                 try {
-                    out.println(outmessage);
+                    sendMessage(outmessage);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
             }
         });
 
-        primaryStage.setScene(new Scene(borderpane, 300,300));
-        String clientnumbers = "Client "+ clientNumber;
-        primaryStage.setTitle(clientnumbers);
+        Scene scene = new Scene(borderpane, 300,300);
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+
+        Label userName = new Label("User Name:");
+        grid.add(userName, 0, 1);
+
+        TextField userTextField = new TextField();
+        grid.add(userTextField, 1, 1);
+
+        Label pw = new Label("Password:");
+        grid.add(pw, 0, 2);
+
+        PasswordField pwBox = new PasswordField();
+        grid.add(pwBox, 1, 2);
+
+        Button btn = new Button("Sign in");
+        btn.setOnAction((ActionEvent e) -> {
+            String username, password;
+            username = userTextField.getText();
+            password = pwBox.getText();
+            if(username.startsWith(" ") || username.equals("")) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter a username", ButtonType.OK);
+                alert.showAndWait();
+
+                if(alert.getResult() == ButtonType.OK){
+                    alert.close();
+                }
+            }else{
+
+                sendMessage(":"+userTextField.getText());
+
+                if (in.readLine().equals("++")){
+                    if(password.equals("") || password.startsWith("")){
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter password", ButtonType.OK);
+                        alert.showAndWait();
+
+                        if(alert.getResult() == ButtonType.OK){
+                            alert.close();
+                        }
+                    }else{
+                        sendMessage("p***");
+                        sendMessage(password);
+                    }
+                }else{
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Uername incorrect", ButtonType.CLOSE);
+                    alert.showAndWait();
+                    if(alert.getResult() == ButtonType.CLOSE){
+                        alert.close();
+                    }
+                }
+            }
+        });
+        HBox hbBtn = new HBox(10);
+        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.getChildren().add(btn);
+        grid.add(hbBtn, 1, 4);
+
+        Button btn2 = new Button("Register");
+        btn2.setOnAction((ActionEvent e) -> {
+
+        });
+        HBox hbBtn2 = new HBox(10);
+        hbBtn2.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn2.getChildren().add(btn2);
+        grid.add(btn2, 1, 5);
+
+        Scene scene2 = new Scene(grid, 200,200);
+
+        primaryStage.setScene(scene2);
+        primaryStage.setTitle("");
         primaryStage.show();
     }
 
@@ -170,7 +248,7 @@ public class Client extends Application implements Runnable{
     }
 
     public static void main(String[] args){
-        int clientNumber = 5;
+
         Client client = new Client();
         client.init(args, "localhost", 6000);
 
