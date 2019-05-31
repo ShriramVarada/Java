@@ -28,6 +28,12 @@ public class Server{
         onlineUsers = new CopyOnWriteArrayList<>();
         executorService = Executors.newCachedThreadPool();
         try {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/sample" +
+                    "user=root&password=Narayana!2");
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,13 +91,95 @@ public class Server{
                     // For signing in
                     if(message.startsWith(":"))
                     {
-
+                        String username = message.substring(1);
+                        String password;
+                        Statement statement = null;
+                        ResultSet resultSet = null;
                         // TODO See if username in use from the database
+                        try{
+                            statement = connection.createStatement();
+                            resultSet = statement.executeQuery("SELECT * FROM (SELECT EXISTS(SELECT * FROM usernames WHERE Username="+username+")) AS SAMPLE");
+                            resultSet.absolute(1);
+                            if(Integer.parseInt(resultSet.getNString(1)) == 0){
+                                sendMessage("--");
+                            }else{
+                                sendMessage("++");
+                                if(!inputfromClient.readLine().startsWith("p***")){
 
+                                    password = inputfromClient.readLine();
+                                    resultSet = statement.executeQuery("SELECT * FROM (SELECT Password FROM usernames WHERE Username="+username+") AS sample2");
+                                    byte[] userpass = resultSet.getBytes(1);
+
+                                    resultSet = statement.executeQuery("SELECT * FROM (SELECT DES_ENCRYPT("+password+"\"0AD243\")) AS SAMPLE3");
+                                    byte[] datapass = resultSet.getBytes(1);
+
+                                    if(Arrays.equals(userpass, datapass)) {
+                                        sendMessage("AAAA");
+                                    }else{
+                                        sendMessage("XXxx");
+                                    }
+                                }
+                            }
+                        }catch(SQLException e){
+                            e.printStackTrace();
+                        }finally {
+                            if (resultSet != null) {
+                                try {
+                                    resultSet.close();
+                                } catch (SQLException sqlEx) { } // ignore
+
+                                resultSet = null;
+                            }
+
+                            if (statement != null) {
+                                try {
+                                    statement.close();
+                                } catch (SQLException sqlEx) { } // ignore
+
+                                statement = null;
+                            }
+                        }
+                    }
+                    else if(message.startsWith(";"))
+                    {
+                        String username = message.substring(1);
+                        String password;
+                        Statement statement = null;
+                        ResultSet resultSet = null;
+
+                        try{
+                            statement = connection.createStatement();
+                            resultSet = statement.executeQuery("SELECT * FROM (SELECT NOT EXISTS(SELECT * FROM usernames WHERE Username="+username+")) AS SAMPLE");
+                            resultSet.absolute(1);
+                            if(Integer.parseInt(resultSet.getNString(1)) == 0){
+                                sendMessage("---");
+                            }else{
+                                sendMessage("+++");
+                                password = inputfromClient.readLine();
+                                statement.executeQuery("INSERT INTO Usernames VALUES ("+username+", DES_ENCRYPT("+password+", \"0AD243\"))");
+                            }
+                        }catch(SQLException e){
+
+                        }finally {
+                            if (resultSet != null) {
+                                try {
+                                    resultSet.close();
+                                } catch (SQLException sqlEx) { } // ignore
+
+                            }
+
+                            if (statement != null) {
+                                try {
+                                    statement.close();
+                                } catch (SQLException sqlEx) { } // ignore
+
+                            }
+                        }
                     }
                     else if (message.startsWith("JOIN"))
                     {
                         channelnumber = message.charAt(11) - '0';
+                        channelList.get(channelnumber).Users.put(username, Boolean.TRUE);
                         channelList.get(channelnumber).activeUsernames.add(username);
                         channelList.get(channelnumber).clientsUsernames.add(username);
 
@@ -99,25 +187,33 @@ public class Server{
 
                         sendMessage("?*"+message.substring(4));
                     }
+                    else if(message.equals("EXIT"))
+                    {
+                        channelList.get(channelnumber).Users.put(username, Boolean.FALSE);
+                    }
                     else if(message.startsWith("EXIT"))
                     {
                         // See if channel number equals in the message and if so, then exit otherwise send mesage
                         // that wrong channel
+                        int prevchannel = channelnumber;
+
+                        channelList.get(channelnumber).Users.put(username, Boolean.FALSE);
                         channelList.get(channelnumber).activeUsernames.remove(username);
                     }
                     else if(message.startsWith("ENTER"))
                     {
-                        //TODO if already in this channel, then do nothing
+                        int prevchannel = channelnumber;
                         channelnumber = message.charAt(12) - '0';
-                        sendMessage("STARTCHANNELTRANS");
+                        if(channelnumber != prevchannel) {
+                            sendMessage("STARTCHANNELTRANS");
 
-                        for(String message2 : channelList.get(channelnumber).messages)
-                        {
-                            sendMessage(message2);
+                            for (String message2 : channelList.get(channelnumber).messages) {
+                                sendMessage(message2);
+                            }
+
+                            sendMessage("ENDCHANNELTRANS");
+                            messageNumber = channelList.get(channelnumber).messages.size();
                         }
-
-                        sendMessage("ENDCHANNELTRANS");
-                        messageNumber = channelList.get(channelnumber).messages.size();
 
                     }
                     else if(message.startsWith("@@@"))
@@ -156,13 +252,6 @@ public class Server{
     public static void main(String[] args){
 
         Server server = new Server(6000);
-
-        try {
-            server.connection = DriverManager.getConnection("jdbc:mysql://localhost/sample" +
-                    "user=root&password=Narayana!2");
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
 
         Socket socket;
         while(true) {

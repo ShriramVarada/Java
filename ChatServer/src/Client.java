@@ -20,15 +20,15 @@ import java.util.concurrent.Executors;
 
 public class Client extends Application implements Runnable{
 
-    private HBox channelButtons = new HBox(5);
+    private HBox channelButtons;
 
-    private TextField enterMessage = new TextField();
+    private TextField enterMessage;
 
     private String[] args;
 
     private static int clientNumber;
 
-    private TextArea textArea = new TextArea();
+    private TextArea textArea;
 
     private PrintWriter out;
     private BufferedReader in;
@@ -48,6 +48,9 @@ public class Client extends Application implements Runnable{
 
     public void init(String[] args, String hostname, int port)
     {
+        channelButtons = new HBox(5);
+        enterMessage = new TextField();
+        textArea = new TextArea();
         this.args = args;
         try {
             socket = new Socket(hostname, port);
@@ -129,6 +132,8 @@ public class Client extends Application implements Runnable{
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                textArea.clear();
+                sendMessage("EXIT");
                 sendMessage("ENTER"+channelNumber);
             }
         });
@@ -136,6 +141,7 @@ public class Client extends Application implements Runnable{
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                textArea.clear();
                 sendMessage("EXIT" + channelNumber);
             }
         });
@@ -218,7 +224,8 @@ public class Client extends Application implements Runnable{
                 sendMessage(":"+username);
                 try {
                     if (in.readLine().equals("++")) {
-                        if (password.equals("") || password.startsWith("")) {
+                        if (password.equals("") || password.startsWith(" ")) {
+                            sendMessage("p***");
                             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter password", ButtonType.OK);
                             alert.showAndWait();
 
@@ -226,11 +233,19 @@ public class Client extends Application implements Runnable{
                                 alert.close();
                             }
                         } else {
-                            sendMessage("p***");
                             sendMessage(password);
 
-                            primaryStage.setScene(scene);
-                            primaryStage.setTitle("Chat");
+                            if(in.readLine().startsWith("AAAA")) {
+                                primaryStage.setScene(scene);
+                                primaryStage.setTitle("Chat");
+                            }else{
+                                Alert alert = new Alert(Alert.AlertType.ERROR, "Password incorrect", ButtonType.OK);
+                                alert.showAndWait();
+
+                                if (alert.getResult() == ButtonType.OK) {
+                                    alert.close();
+                                }
+                            }
                         }
                     } else {
                         Alert alert = new Alert(Alert.AlertType.ERROR, "Uername incorrect", ButtonType.CLOSE);
@@ -257,11 +272,12 @@ public class Client extends Application implements Runnable{
                 if(alert.getResult() == ButtonType.OK){
                     alert.close();
                 }
+                sendMessage("p****");
             }else{
                 sendMessage(";"+username);
                 try {
                     if (in.readLine().equals("+++")) {
-                        sendMessage("p****");
+
                         sendMessage(password);
                     } else {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION, "Username already taken", ButtonType.OK);
