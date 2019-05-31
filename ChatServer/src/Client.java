@@ -1,3 +1,4 @@
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -31,6 +32,9 @@ public class Client extends Application implements Runnable{
 
     private PrintWriter out;
     private BufferedReader in;
+
+    private Scene scene;
+    private Scene scene2;
 
     public String getClientusername() {
         return username;
@@ -162,7 +166,7 @@ public class Client extends Application implements Runnable{
             }
         });
 
-        Scene scene = new Scene(borderpane, 300,300);
+        scene = new Scene(borderpane, 300,300);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -184,12 +188,26 @@ public class Client extends Application implements Runnable{
         grid.add(pwBox, 1, 2);
 
         Button btn = new Button("Sign in");
+
+        HBox hbBtn = new HBox(10);
+        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.getChildren().add(btn);
+        grid.add(hbBtn, 1, 4);
+
+        Button btn2 = new Button("Register");
+        HBox hbBtn2 = new HBox(10);
+        hbBtn2.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn2.getChildren().add(btn2);
+        grid.add(btn2, 1, 5);
+
+        scene2 = new Scene(grid, 200,200);
+
         btn.setOnAction((ActionEvent e) -> {
             String username, password;
             username = userTextField.getText();
             password = pwBox.getText();
             if(username.startsWith(" ") || username.equals("")) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter a username", ButtonType.OK);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Enter your username", ButtonType.OK);
                 alert.showAndWait();
 
                 if(alert.getResult() == ButtonType.OK){
@@ -197,47 +215,72 @@ public class Client extends Application implements Runnable{
                 }
             }else{
 
-                sendMessage(":"+userTextField.getText());
+                sendMessage(":"+username);
+                try {
+                    if (in.readLine().equals("++")) {
+                        if (password.equals("") || password.startsWith("")) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter password", ButtonType.OK);
+                            alert.showAndWait();
 
-                if (in.readLine().equals("++")){
-                    if(password.equals("") || password.startsWith("")){
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter password", ButtonType.OK);
+                            if (alert.getResult() == ButtonType.OK) {
+                                alert.close();
+                            }
+                        } else {
+                            sendMessage("p***");
+                            sendMessage(password);
+
+                            primaryStage.setScene(scene);
+                            primaryStage.setTitle("Chat");
+                        }
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "Uername incorrect", ButtonType.CLOSE);
                         alert.showAndWait();
-
-                        if(alert.getResult() == ButtonType.OK){
+                        if (alert.getResult() == ButtonType.CLOSE) {
                             alert.close();
                         }
-                    }else{
-                        sendMessage("p***");
-                        sendMessage(password);
                     }
-                }else{
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Uername incorrect", ButtonType.CLOSE);
-                    alert.showAndWait();
-                    if(alert.getResult() == ButtonType.CLOSE){
-                        alert.close();
-                    }
+                }catch(IOException er){
+                    er.printStackTrace();
                 }
             }
         });
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn.getChildren().add(btn);
-        grid.add(hbBtn, 1, 4);
 
-        Button btn2 = new Button("Register");
+
         btn2.setOnAction((ActionEvent e) -> {
+            String username = userTextField.getText();
+            String password = pwBox.getText();
+
+            if(username.startsWith(" ") || username.equals("")) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter a username to REGISTER", ButtonType.OK);
+                alert.showAndWait();
+
+                if(alert.getResult() == ButtonType.OK){
+                    alert.close();
+                }
+            }else{
+                sendMessage(";"+username);
+                try {
+                    if (in.readLine().equals("+++")) {
+                        sendMessage("p****");
+                        sendMessage(password);
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Username already taken", ButtonType.OK);
+                        alert.showAndWait();
+
+                        if (alert.getResult() == ButtonType.OK) {
+                            alert.close();
+                        }
+                    }
+                }catch(IOException er){
+                    er.printStackTrace();
+                }
+            }
+
 
         });
-        HBox hbBtn2 = new HBox(10);
-        hbBtn2.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn2.getChildren().add(btn2);
-        grid.add(btn2, 1, 5);
-
-        Scene scene2 = new Scene(grid, 200,200);
 
         primaryStage.setScene(scene2);
-        primaryStage.setTitle("");
+        primaryStage.setTitle("LOGIN");
         primaryStage.show();
     }
 

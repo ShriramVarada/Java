@@ -81,32 +81,13 @@ public class Server{
                     }
 
                     message = inputfromClient.readLine();
+
+                    // For signing in
                     if(message.startsWith(":"))
                     {
-                        Boolean inUse = false;
-                        username = message.substring(1);
 
-                        for (Channel channel : channelList)
-                        {
-                            for (String username2: channel.clientsUsernames)
-                            {
-                                if(username2.equals(username))
-                                {
-                                    inUse = true;
-                                }
-                            }
-                        }
+                        // TODO See if username in use from the database
 
-                        // TODO handle this in a mysql database from the server
-
-                        if(inUse)
-                        {
-                            sendMessage("USERNAMEINUSE");
-                        }
-                        else {
-                            onlineUsers.add(username);
-                            sendMessage("USERNAME:" + message.substring(1));
-                        }
                     }
                     else if (message.startsWith("JOIN"))
                     {
@@ -142,6 +123,10 @@ public class Server{
                     else if(message.startsWith("@@@"))
                     {
                         Thread.currentThread().interrupt();
+                    }
+                    else if(message.startsWith())
+                    {
+
                     }
                     else
                     {
